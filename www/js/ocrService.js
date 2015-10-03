@@ -45,6 +45,8 @@
                 // Request successfully completed
                 var result = decodeURIComponent(response.response);
 
+                // TODO parse data
+
                 defer.resolve(result);
             }, function(error) {
                 defer.reject(error);

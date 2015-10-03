@@ -142,7 +142,7 @@ angular.module('aescote', ['ionic', 'firebase', 'OcrService'])
         }
     })
 
-    .controller("GroupController", function ($q, $scope, Storage, $firebaseObject, $state) {
+    .controller("GroupController", function ($q, $scope, Storage, $firebaseObject, $state, Camera) {
         $scope.loggedInUser = Storage.getLoggedInUser().email;
 
         $scope.joinGroup = joinGroup;
@@ -172,49 +172,47 @@ angular.module('aescote', ['ionic', 'firebase', 'OcrService'])
         }
 
         function capturePhotoEdit() {
-            var defer = $q.defer();
-            defer.resolve([
+            var items = [
                 {
-                    name: 'Item 1',
-                    value: '10.00',
+                    name: 'Warsteiner Pi',
+                    value: '10.40',
                     users: []
                 },
                 {
-                    name: 'Item 2',
-                    value: '12.00',
+                    name: 'Tiramisu dell',
+                    value: '8',
+                    users: []
+                },
+                {
+                    name: 'Pasta Arrabiata',
+                    value: '17.50',
+                    users: []
+                },
+                {
+                    name: 'Penne Florentiner',
+                    value: '4',
+                    users: []
+                },
+                {
+                    name: 'Risotto ai Fun',
+                    value: '21.50',
                     users: []
                 }
-            ]);
 
-            // Take picture using device camera, allow edit, and retrieve image as base64-encoded string
-            //navigator.camera.getPicture(function onPhotoURISuccess(imageURI) {
-            //        // SEE CapturePhotoCtrl
-            //        defer.resolve([
-            //            {
-            //                name: 'Item 1',
-            //                value: '10.00'
-            //            },
-            //            {
-            //                name: 'Item 2',
-            //                value: '12.00'
-            //            }
-            //        ]);
-            //    }
-            //    , function() {
-            //        defer.reject();
-            //    }, {
-            //    quality: 50, allowEdit: true,
-            //    destinationType: destinationType.FILE_URI
-            //});
+            ];
+
+            var defer = $q.defer();
+
+            Camera.getPicture()
+                .then(function () {
+                    defer.resolve(items)
+                }, function (error) {
+                    alert('Failed: ' + error);
+                    defer.reject();
+                });
 
             return defer.promise;
         }
-
-
-        //function onFail(error) {
-        //    $scope.errorGettingPicture = error;
-        //}
-
     })
 
     .run(function ($ionicPlatform) {
@@ -226,6 +224,23 @@ angular.module('aescote', ['ionic', 'firebase', 'OcrService'])
             }
         })
     })
+
+    .factory('Camera', ['$q', function ($q) {
+        return {
+            getPicture: function (options) {
+                var q = $q.defer();
+
+                navigator.camera.getPicture(function (result) {
+                    // Do any magic you need
+                    q.resolve(result);
+                }, function (err) {
+                    q.reject(err);
+                }, options);
+
+                return q.promise;
+            }
+        }
+    }])
 
     .controller('CapturePhotoCtrl', function ($scope, OcrService) {
 
