@@ -1,14 +1,13 @@
 <ion-view title="GroupDetail">
     <ion-content>
-      <div class="row">
-        <div class="col col-10">
-          <div class="card">
-            <div class="item item-text-wrap">
-              <i class="icon ion-person"></i>
-              {{loggedInUser}}
-            </div>
-          </div>
 
+      <div class="card">
+        <div class="item item-text-wrap">
+          <i class="icon ion-person"></i>
+          {{loggedInUser}}
+          <br>
+          <i class="icon ion-ios-people"></i>
+          {{selectedGroup}}
         </div>
       </div>
 
@@ -17,7 +16,7 @@
               <span>{{item.name}}</span>
               <span>{{item.value}}</span>
               <br>
-              <span ng-repeat="user in item.users">{{user.email}}</span>
+              <span ng-repeat="user in item.users">&nbsp;{{user.email}}&nbsp;</span>
           </a>
         </div>
 

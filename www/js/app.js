@@ -89,6 +89,8 @@ angular.module('aescote', ['ionic', 'firebase', 'OcrService'])
 
     .controller("GroupDetailController", function ($scope, $stateParams, $firebaseObject, Storage) {
         $scope.loggedInUser = Storage.getLoggedInUser().email;
+        $scope.selectedGroup = Storage.getSelectedGroup();
+
         $scope.selectItem = selectItem;
         $scope.summarizeGroup = summarizeGroup;
         $scope.showSummaryValue = showSummaryValue;
