@@ -4,7 +4,10 @@
 
         <div id="item-list" class="list">
           <a ng-repeat="item in group.items" class="item" href="#" ng-click="selectItem(item)">
-            {{item.name}} | {{item.value}} | {{item.users}}
+              <span>{{item.name}}</span>
+              <span>{{item.value}}</span>
+              <br>
+              <span ng-repeat="user in item.users">{{user.email}}</span>
           </a>
         </div>
 
