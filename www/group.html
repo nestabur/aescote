@@ -1,31 +1,26 @@
 <ion-view title="Group">
-  <ion-content>
+    <ion-content>
 
-    <div class="row">
-      <div class="col col-10">
         <div class="card">
-          <div class="item item-text-wrap">
-            <i class="icon ion-person"></i>
-            {{loggedInUser}}
-          </div>
+            <div class="item item-text-wrap">
+                <i class="icon ion-person"></i>
+                {{loggedInUser}}
+            </div>
         </div>
 
-      </div>
-    </div>
+        <div class="list list-inset">
+            <label class="item item-input">
+                <input type="text" placeholder="Group Name" ng-model="groupName">
+            </label>
+            <button class="button button-block" ng-click="joinGroup(groupName)">
+                <i class="icon ion-search"></i>
+                Search
+            </button>
+            <button class="button button-block" ng-click="captureTicket(groupName)">
+                <i class="icon ion-ios-camera-outline"></i>
+                Capture
+            </button>
+        </div>
 
-    <div class="list list-inset">
-      <label class="item item-input">
-        <input type="text" placeholder="Group Name" ng-model="groupName">
-      </label>
-      <button class="button button-block" ng-click="joinGroup(groupName)">
-        <i class="icon ion-search"></i>
-        Search
-      </button>
-      <button class="button button-block" ng-click="captureTicket(groupName)">
-        <i class="icon ion-ios-camera-outline"></i>
-        Capture
-      </button>
-    </div>
-
-  </ion-content>
+    </ion-content>
 </ion-view>
