@@ -1,5 +1,5 @@
 <ion-view title="GroupDetail">
-    <ion-content>
+      <ion-scroll>
 
       <div class="card">
         <div class="item item-text-wrap">
@@ -12,12 +12,14 @@
       </div>
 
         <div id="item-list" class="list list-inset" ng-if="!showSummaryValue()">
+
           <a ng-repeat="item in group.items" class="item" href="#" ng-click="selectItem(item)">
               <span>{{item.name}}</span>
               <span>{{item.value}}</span>
               <br>
               <span ng-repeat="user in item.users">&nbsp;{{user.email}}&nbsp;</span>
           </a>
+
         </div>
 
         <div id="validateGroup" class="list list-inset" ng-if="!showSummaryValue()">
@@ -39,6 +41,6 @@
                 </div>
               </div>
         </div>
+        </ion-scroll>
 
-    </ion-content>
 </ion-view>
