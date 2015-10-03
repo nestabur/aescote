@@ -16,6 +16,8 @@ Technologies
 Ionic Framework (http://ionicframework.com/)
 Apache Cordova (https://cordova.apache.org/)
 AngularJS (https://angularjs.org/)
+Firebase (https://www.firebase.com/)
+
 
 Devices
 -----------------
