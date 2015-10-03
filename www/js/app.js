@@ -143,32 +143,18 @@ angular.module('aescote', ['ionic', 'firebase', 'OcrService'])
 
     .controller("GroupController", function ($q, $scope, Storage, $firebaseObject, $state) {
         $scope.loggedInUser = Storage.getLoggedInUser().email;
-        $scope.inSearchMode = false;
-        $scope.inAddMode = false;
 
-        $scope.addGroup = addGroup;
-        $scope.searchGroup = searchGroup;
         $scope.joinGroup = joinGroup;
-
         $scope.captureTicket = captureTicket;
 
-        function addGroup() {
-            $scope.inAddMode = true;
-        }
-
-        function searchGroup() {
-            $scope.inSearchMode = true;
-        }
 
         function joinGroup(groupName) {
-            $scope.inSearchMode = false;
             Storage.setSelectedGroup(groupName);
             $state.go("groupDetail");
         }
 
         function captureTicket(groupName) {
             capturePhotoEdit().then(function(items) {
-                $scope.inAddMode = false;
                 var ref = new Firebase("https://aescote.firebaseio.com/"+groupName);
                 var obj = $firebaseObject(ref);
 

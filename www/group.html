@@ -1,19 +1,31 @@
 <ion-view title="Group">
   <ion-content>
-    {{loggedInUser}} - GROUPS
-    <button ng-click="addGroup()">Add Group</button>
-    <button ng-click="searchGroup()">Search Group</button>
 
-    <div ng-if="inAddMode">
-      <label for="groupName">Group Name</label>
-      <input id="groupName" ng-model="groupName">
-      <button ng-click="captureTicket(groupName)">Capture Ticket</button>
+    <div class="row">
+      <div class="col col-10">
+        <div class="card">
+          <div class="item item-text-wrap">
+            <i class="icon ion-person"></i>
+            {{loggedInUser}}
+          </div>
+        </div>
+
+      </div>
     </div>
 
-    <div ng-if="inSearchMode">
-      <label for="groupName">Group Name</label>
-      <input id="groupName" ng-model="groupName">
-      <button ng-click="joinGroup(groupName)">Select Group</button>
+    <div class="list list-inset">
+      <label class="item item-input">
+        <input type="text" placeholder="Group Name" ng-model="groupName">
+      </label>
+      <button class="button button-block" ng-click="joinGroup(groupName)">
+        <i class="icon ion-search"></i>
+        Search
+      </button>
+      <button class="button button-block" ng-click="captureTicket(groupName)">
+        <i class="icon ion-ios-camera-outline"></i>
+        Capture
+      </button>
     </div>
+
   </ion-content>
 </ion-view>
