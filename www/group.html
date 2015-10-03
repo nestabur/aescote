@@ -1,1 +1,19 @@
-group detail
+<ion-view title="Group">
+  <ion-content>
+    {{loggedInUser}} - GROUPS
+    <button ng-click="addGroup()">Add Group</button>
+    <button ng-click="searchGroup()">Search Group</button>
+
+    <div ng-if="inAddMode">
+      <label for="groupName">Group Name</label>
+      <input id="groupName" ng-model="groupName">
+      <button ng-click="captureTicket(groupName)">Capture Ticket</button>
+    </div>
+
+    <div ng-if="inSearchMode">
+      <label for="groupName">Group Name</label>
+      <input id="groupName" ng-model="groupName">
+      <button ng-click="joinGroup(groupName)">Select Group</button>
+    </div>
+  </ion-content>
+</ion-view>

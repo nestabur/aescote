@@ -3,7 +3,7 @@
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
-angular.module('starter', ['ionic', 'firebase', 'OcrService'])
+angular.module('aescote', ['ionic', 'firebase', 'OcrService'])
 
     .run(function ($ionicPlatform) {
         $ionicPlatform.ready(function () {
@@ -22,12 +22,12 @@ angular.module('starter', ['ionic', 'firebase', 'OcrService'])
 // we pass in a username and get back their synchronized data as an object
     .factory("Profile", ["$firebaseObject",
         function ($firebaseObject) {
-            return function (username) {
+            return function (node) {
                 // create a reference to the database where we will store our data
                 //var randomRoomId = Math.round(Math.random() * 100000000);
                 //var ref = new Firebase("https://f2c2gl3tdy5.firebaseio-demo.com/data/" + randomRoomId);
-                var ref = new Firebase("https://f2c2gl3tdy5.firebaseio-demo.com/data");
-                var profileRef = ref.child(username);
+                var ref = new Firebase("https://aescote.firebaseio.com");
+                var profileRef = ref.child(node);
 
                 // return it as a synchronized object
                 return $firebaseObject(profileRef);
@@ -35,71 +35,209 @@ angular.module('starter', ['ionic', 'firebase', 'OcrService'])
         }
     ])
 
-.controller("ProfileCtrl", ["$scope", "Profile",
-  function($scope, Profile) {
-    // create a three-way binding to our Profile as $scope.profile
-    Profile("physicsmarie").$bindTo($scope, "profile");
-  }
-])
+    .factory("Storage", function () {
+        var loggedInUser = {};
+        var selectedGroup = "";
 
-  .factory("Storage", function(){
-    var loggedInUser = {};
+        return {
+            setLoggedInUser: function (userEmail) {
+                loggedInUser.email = userEmail;
+            },
+            getLoggedInUser: function () {
+                return loggedInUser;
+            },
 
-    return {
-      setLoggedInUser: function(userEmail) {
-        loggedInUser.email = userEmail;
-      },
+            setSelectedGroup: function(groupName) {
+                selectedGroup = groupName;
+            },
+            getSelectedGroup: function() {
+                return selectedGroup;
+            }
+        }
 
-      getLoggedInUser: function() {
-        return loggedInUser;
-      }
-    }
-
-  })
-
-  .config(function($stateProvider, $urlRouterProvider) {
-    $stateProvider
-      .state('login', {
-        url: '/login',
-        templateUrl: 'login.html',
-        controller: 'LoginController'
-      })
-      .state('groups', {
-        url: '/groups',
-        templateUrl: 'groups.html',
-        controller: 'GroupsController'
-      })
-      .state('group', {
-        url: "/groups/:groupId",
-        templateUrl: "group.html",
-        controller: "GroupController"
-      });
-    $urlRouterProvider.otherwise('/login');
-  })
-.controller("GroupController", function($scope, $stateParams) {
+    })
 
 
-})
-  .controller("LoginController", function($scope, $state, Storage) {
-    $scope.doLogin = function() {
-      Storage.setLoggedInUser($scope.user);
-      $state.go('groups');
-    }
+    .config(function ($stateProvider, $urlRouterProvider) {
+        $stateProvider
+            .state('login', {
+                url: '/login',
+                templateUrl: 'login.html',
+                controller: 'LoginController'
+            })
+            .state('group', {
+                url: '/group',
+                templateUrl: 'group.html',
+                controller: 'GroupController'
+            })
+            .state('groupDetail', {
+                url: '/groupDetail',
+                templateUrl: 'groupDetail.html',
+                controller: 'GroupDetailController'
+            })
+            .state('summary', {
+                url: "/summary",
+                templateUrl: "summary.html",
+                controller: "SummaryController"
+            });
+        $urlRouterProvider.otherwise('/login');
+    })
 
-  })
-  .controller("GroupsController", function($scope, Storage) {
-    $scope.loggedInUser = Storage.getLoggedInUser.email;
+    .controller("SummaryController", function ($scope, $stateParams) {
 
-  })
+    })
+
+    .controller("GroupDetailController", function ($scope, $stateParams, $firebaseObject, Storage) {
+        $scope.selectItem = selectItem;
+        $scope.summarizeGroup = summarizeGroup;
+        $scope.showSummaryValue = showSummaryValue;
+        $scope.displaySummaryValue = displaySummaryValue;
+
+        $scope.group= {};
+
+        var ref = new Firebase("https://aescote.firebaseio.com/"+Storage.getSelectedGroup());
+        var obj = $firebaseObject(ref);
+        obj.$bindTo($scope, "group");
+
+        function selectItem(item) {
+            if(!item.users)  {
+                item.users=[];
+            }
+            item.users.push(Storage.getLoggedInUser());
+        }
+
+        function summarizeGroup() {
+            $scope.group.sumary = {};
+
+            angular.forEach($scope.group.items, function(item) {
+                var value = eval(item.value) / item.users.length;
+
+                angular.forEach(item.users, function(user) {
+                    if($scope.group.sumary[user.email]){
+                        $scope.group.sumary[user.email] = $scope.group.sumary[user.email] + value;
+                    } else {
+                        $scope.group.sumary[user.email] = value;
+                    }
+                });
+            });
+
+            $scope.group.status = 'CLOSED';
+        }
+
+        function showSummaryValue() {
+            return $scope.group.status === 'CLOSED';
+        }
+
+        function displaySummaryValue() {
+            return $scope.group.sumary[Storage.getLoggedInUser().email];
+        }
+
+    })
+
+    .controller("LoginController", function ($scope, $state, Storage) {
+        $scope.doLogin = function (user) {
+            Storage.setLoggedInUser(user);
+            $state.go('group');
+        }
+    })
+
+    .controller("GroupController", function ($q, $scope, Storage, $firebaseObject, $state) {
+        $scope.loggedInUser = Storage.getLoggedInUser().email;
+        $scope.inSearchMode = false;
+        $scope.inAddMode = false;
+
+        $scope.addGroup = addGroup;
+        $scope.searchGroup = searchGroup;
+        $scope.joinGroup = joinGroup;
+
+        $scope.captureTicket = captureTicket;
+
+        function addGroup() {
+            $scope.inAddMode = true;
+        }
+
+        function searchGroup() {
+            $scope.inSearchMode = true;
+        }
+
+        function joinGroup(groupName) {
+            $scope.inSearchMode = false;
+            Storage.setSelectedGroup(groupName);
+            $state.go("groupDetail");
+        }
+
+        function captureTicket(groupName) {
+            capturePhotoEdit().then(function(items) {
+                $scope.inAddMode = false;
+                var ref = new Firebase("https://aescote.firebaseio.com/"+groupName);
+                var obj = $firebaseObject(ref);
+
+                obj.items = items;
+                obj.status = 'OPEN';
+                obj.$save().then(function(ref) {
+                    Storage.setSelectedGroup(groupName);
+                    $state.go("groupDetail");
+
+                }, function(error) {
+                    console.log("Error:", error);
+                });
+            });
+        }
+
+        function capturePhotoEdit() {
+            var defer = $q.defer();
+            defer.resolve([
+                {
+                    name: 'Item 1',
+                    value: '10.00',
+                    users: []
+                },
+                {
+                    name: 'Item 2',
+                    value: '12.00',
+                    users: []
+                }
+            ]);
+
+            // Take picture using device camera, allow edit, and retrieve image as base64-encoded string
+            //navigator.camera.getPicture(function onPhotoURISuccess(imageURI) {
+            //        // SEE CapturePhotoCtrl
+            //        defer.resolve([
+            //            {
+            //                name: 'Item 1',
+            //                value: '10.00'
+            //            },
+            //            {
+            //                name: 'Item 2',
+            //                value: '12.00'
+            //            }
+            //        ]);
+            //    }
+            //    , function() {
+            //        defer.reject();
+            //    }, {
+            //    quality: 50, allowEdit: true,
+            //    destinationType: destinationType.FILE_URI
+            //});
+
+            return defer.promise;
+        }
+
+
+        //function onFail(error) {
+        //    $scope.errorGettingPicture = error;
+        //}
+
+    })
 
     .run(function ($ionicPlatform) {
-      $ionicPlatform.ready(function () {
-        // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
-        // for form inputs)
-        if (window.cordova && window.cordova.plugins.Keyboard) {
-          cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
-        }
-      })
+        $ionicPlatform.ready(function () {
+            // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
+            // for form inputs)
+            if (window.cordova && window.cordova.plugins.Keyboard) {
+                cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+            }
+        })
     })
 
     .controller('CapturePhotoCtrl', function ($scope, OcrService) {

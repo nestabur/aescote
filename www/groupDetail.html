@@ -1,0 +1,24 @@
+<ion-view title="Group">
+    <ion-content>
+        {{loggedInUser}} - GROUPS
+
+        <div id="item-list" class="list">
+          <a ng-repeat="item in group.items" class="item" href="#" ng-click="selectItem(item)">
+            {{item.name}} | {{item.value}} | {{item.users}}
+          </a>
+        </div>
+
+        <div id="validateGroup">
+          <button ng-click="summarizeGroup()">Summarize</button>
+        </div>
+
+        <div id="groupStatus">
+            {{group.status}}
+        </div>
+
+        <div id="summary" ng-if="showSummaryValue()">
+            TOTAL TO PAY: {{displaySummaryValue()}}
+            <!--<span ng-init="displaySummaryValue()">TOTAL TO PAY: {{summaryValue}}</span>-->
+        </div>
+    </ion-content>
+</ion-view>
