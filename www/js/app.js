@@ -41,7 +41,58 @@ angular.module('starter', ['ionic', 'OcrService'])
     // create a three-way binding to our Profile as $scope.profile
     Profile("physicsmarie").$bindTo($scope, "profile");
   }
-]);
+])
+
+  .factory("Storage", function(){
+    var loggedInUser = {};
+
+    return {
+      setLoggedInUser: function(userEmail) {
+        loggedInUser.email = userEmail;
+      },
+
+      getLoggedInUser: function() {
+        return loggedInUser;
+      }
+    }
+
+  })
+
+  .config(function($stateProvider, $urlRouterProvider) {
+    $stateProvider
+      .state('login', {
+        url: '/login',
+        templateUrl: 'login.html',
+        controller: 'LoginController'
+      })
+      .state('groups', {
+        url: '/groups',
+        templateUrl: 'groups.html',
+        controller: 'GroupsController'
+      })
+      .state('group', {
+        url: "/groups/:groupId",
+        templateUrl: "group.html",
+        controller: "GroupController"
+      });
+    $urlRouterProvider.otherwise('/login');
+  })
+.controller("GroupController", function($scope, $stateParams) {
+
+
+})
+  .controller("LoginController", function($scope, $state, Storage) {
+    $scope.doLogin = function() {
+      Storage.setLoggedInUser($scope.user);
+      $state.go('groups');
+    }
+
+  })
+  .controller("GroupsController", function($scope, Storage) {
+    $scope.loggedInUser = Storage.getLoggedInUser.email;
+
+  })
+;
 
 
     .run(function ($ionicPlatform) {

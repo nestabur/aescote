@@ -1,0 +1,10 @@
+<ion-view title="Groups">
+  <ion-content>
+    {{loggedInUser}} - GROUPS
+    <div class="list">
+      <a ng-repeat="group in groups" class="item" href="#/groups/{{group.id}}">
+        {{group.name}}
+      </a>
+    </div>
+  </ion-content>
+</ion-view>
