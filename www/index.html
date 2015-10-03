@@ -5,40 +5,24 @@
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
     <title></title>
 
-
     <!-- compiled css output -->
     <link href="css/ionic.app.css" rel="stylesheet">
 
     <!-- ionic/angularjs js -->
     <script src="lib/ionic/js/ionic.bundle.js"></script>
 
+    <!-- Firebase -->
+    <script src="lib/firebase/firebase.js"></script>
+    <script src="lib/angularfire/dist/angularfire.min.js"></script>
+
     <!-- cordova script (this will be a 404 during development) -->
-    <script src="cordova.js"></script>
+    <!-- script src="cordova.js"></script-->
 
     <!-- your app's js -->
-    <script src="js/ocrService.js"></script>
     <script src="js/app.js"></script>
+
   </head>
-
-  <body ng-app="starter" ng-controller="Application">
-
-  <script type="text/javascript" charset="utf-8">
-
-    var pictureSource;   // picture source
-    var destinationType; // sets the format of returned value
-
-    // Wait for Cordova to connect with the device
-    //
-    document.addEventListener("deviceready",onDeviceReady,false);
-
-    // Cordova is ready to be used!
-    //
-    function onDeviceReady() {
-      pictureSource=navigator.camera.PictureSourceType;
-      destinationType=navigator.camera.DestinationType;
-      // After device ready, create a local alias
-    }
-  </script>
+  <body ng-app="starter" ng-controller="ProfileCtrl">
 
     <ion-pane>
       <ion-header-bar class="bar-stable">
@@ -46,22 +30,16 @@
       </ion-header-bar>
 
       <ion-content>
-        This is a hello world!
+        <!--h3>Edit {{ profile.$id }}</h3-->
 
-        <button ng-click="capturePhoto()">Capture Photo</button> <br>
-        <button ng-click="capturePhotoEdit()">Capture Editable Photo</button> <br>
+        <label>Name:</label>
+        <!-- this input field synchronizes directly to the name attribute in our Firebase database! -->
+        <input type="text" ng-model="profile.name">
 
-        Result:
-        <p id="resultado">{{result}}</p>
-
-        Error getting picture: {{errorGettingPicture}}
-        <br>
-        Error reading file: {{errorReadingFile}}
-        <br>
-        Status: {{status}}
-
+        <label>Email:</label>
+        <!-- and this input field synchronizes directly to the email attribute in our Firebase database! -->
+        <input type="text" ng-model="profile.email">
       </ion-content>
-
     </ion-pane>
   </body>
 </html>
